@@ -1,0 +1,21 @@
+{
+  "Group": "sn0wkzy",
+  "Name": "party",
+  "Version": "1.0.0",
+  "Description": "",
+  "Authors": [
+    {
+      "Name": "sn0wkzy"
+    }
+  ],
+  "Website": "${website}",
+  "ServerVersion": "*",
+  "Dependencies": {
+    "Hytale:DamageModule": "*",
+    "Hytale:EntityModule": "*"
+  },
+  "OptionalDependencies": {},
+  "DisabledByDefault": false,
+  "Main": "com.hytale.party.PartyPlugin",
+  "IncludesAssetPack": true
+}

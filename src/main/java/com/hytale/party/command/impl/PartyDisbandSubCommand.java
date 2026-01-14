@@ -2,6 +2,7 @@ package com.hytale.party.command.impl;
 
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.protocol.packets.interface_.NotificationStyle;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractAsyncCommand;
@@ -20,12 +21,12 @@ import java.util.HashSet;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public class PartyCreateSubCommand extends AbstractAsyncCommand {
+public class PartyDisbandSubCommand extends AbstractAsyncCommand {
 
     private final PartyCache partyCache;
 
-    public PartyCreateSubCommand(PartyCache partyCache) {
-        super("create", "Create a party");
+    public PartyDisbandSubCommand(PartyCache partyCache) {
+        super("disband", "Disband your current party.");
         this.partyCache = partyCache;
     }
 
@@ -47,16 +48,19 @@ public class PartyCreateSubCommand extends AbstractAsyncCommand {
             final PlayerRef playerRef = store.getComponent(reference, PlayerRef.getComponentType());
             if (playerRef == null) return;
 
-            if (partyCache.hasParty(playerRef.getUuid())) {
-                commandContext.sendMessage(MessagesConfig.ALREADY_IN_A_PARTY);
+            if (!partyCache.hasParty(playerRef.getUuid())) {
+                player.sendMessage(MessagesConfig.NOT_IN_A_PARTY);
                 return;
             }
 
-            final HashSet<UUID> members = new HashSet<>(Collections.singleton(playerRef.getUuid()));
-            final Party party = new Party(playerRef.getUuid(), members, new HashSet<>());
+            final Party party = partyCache.getByOwner(playerRef.getUuid());
+            if(party == null) {
+                player.sendMessage(MessagesConfig.ONLY_OWNER_CAN_DISBAND);
+                return;
+            }
 
-            partyCache.add(party);
-            playerRef.sendMessage(MessagesConfig.PARTY_CREATED);
+            partyCache.remove(party);
+            party.sendNotification(Message.raw("Party"), MessagesConfig.PARTY_DISBAND, NotificationStyle.Success);
         });
 
         return CompletableFuture.completedFuture(null);

@@ -2,6 +2,7 @@ package com.hytale.party.command.impl;
 
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.protocol.packets.interface_.NotificationStyle;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractAsyncCommand;
@@ -14,18 +15,14 @@ import com.hytale.party.messages.MessagesConfig;
 import com.hytale.party.model.Party;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
-import java.awt.*;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public class PartyCreateSubCommand extends AbstractAsyncCommand {
+public class PartyPublicSubCommand extends AbstractAsyncCommand {
 
     private final PartyCache partyCache;
 
-    public PartyCreateSubCommand(PartyCache partyCache) {
-        super("create", "Create a party");
+    public PartyPublicSubCommand(PartyCache partyCache) {
+        super("public", "Change your party to public or private");
         this.partyCache = partyCache;
     }
 
@@ -43,20 +40,26 @@ public class PartyCreateSubCommand extends AbstractAsyncCommand {
 
         final Store<EntityStore> store = reference.getStore();
         final World world = store.getExternalData().getWorld();
+
         world.execute(() -> {
             final PlayerRef playerRef = store.getComponent(reference, PlayerRef.getComponentType());
             if (playerRef == null) return;
 
-            if (partyCache.hasParty(playerRef.getUuid())) {
-                commandContext.sendMessage(MessagesConfig.ALREADY_IN_A_PARTY);
+            if (!partyCache.hasParty(playerRef.getUuid())) {
+                player.sendMessage(MessagesConfig.NOT_IN_A_PARTY);
                 return;
             }
 
-            final HashSet<UUID> members = new HashSet<>(Collections.singleton(playerRef.getUuid()));
-            final Party party = new Party(playerRef.getUuid(), members, new HashSet<>());
+            final Party party = partyCache.getByOwner(playerRef.getUuid());
+            if (party == null) {
+                player.sendMessage(MessagesConfig.ONLY_OWNER_CAN_DISBAND);
+                return;
+            }
 
-            partyCache.add(party);
-            playerRef.sendMessage(MessagesConfig.PARTY_CREATED);
+            party.setPublish(!party.isPublish());
+
+            final String status = party.isPublish() ? "public" : "private";
+            party.sendNotification(Message.raw("Party"), MessagesConfig.PARTY_PUBLIC_STATUS.param("%status%", status), NotificationStyle.Success);
         });
 
         return CompletableFuture.completedFuture(null);

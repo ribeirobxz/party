@@ -2,9 +2,8 @@ package com.hytale.party.command.impl;
 
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
-import com.hypixel.hytale.server.core.command.system.arguments.system.RequiredArg;
-import com.hypixel.hytale.server.core.command.system.arguments.types.ArgTypes;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractAsyncCommand;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
@@ -15,18 +14,18 @@ import com.hytale.party.messages.MessagesConfig;
 import com.hytale.party.model.Party;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
+import java.awt.*;
 import java.util.concurrent.CompletableFuture;
 
-public class PartyInviteSubCommand extends AbstractAsyncCommand {
+public class PartyChatSubCommand extends AbstractAsyncCommand {
 
     private final PartyCache partyCache;
-    private RequiredArg<PlayerRef> targetRefArg;
 
-    public PartyInviteSubCommand(PartyCache partyCache) {
-        super("invite", "Invite some player for your party");
+    public PartyChatSubCommand(PartyCache partyCache) {
+        super("chat", "Chat with party members");
         this.partyCache = partyCache;
 
-        this.targetRefArg = this.withRequiredArg("player", "target player", ArgTypes.PLAYER_REF);
+        setAllowsExtraArguments(true);
     }
 
     @NonNullDecl
@@ -50,25 +49,21 @@ public class PartyInviteSubCommand extends AbstractAsyncCommand {
 
             final Party party = partyCache.getParty(playerRef.getUuid());
             if (party == null) {
-                player.sendMessage(MessagesConfig.NOT_IN_A_PARTY);
+                playerRef.sendMessage(MessagesConfig.NOT_IN_A_PARTY);
                 return;
             }
 
-            if (!party.isLeader(playerRef.getUuid())) {
-                player.sendMessage(MessagesConfig.ONLY_OWNER_CAN_DISBAND);
-                return;
+            final String[] parts = commandContext.getInputString().split(" ");
+            final StringBuilder messageBuilder = new StringBuilder();
+            for (int i = 2; i < parts.length; i++) {
+                messageBuilder.append(parts[i]);
+                if (i < parts.length - 1) {
+                    messageBuilder.append(" ");
+                }
             }
 
-            final PlayerRef targetRef = commandContext.get(targetRefArg);
-            if (targetRef == null) {
-                playerRef.sendMessage(MessagesConfig.PLAYER_NOT_FOUND);
-                return;
-            }
-
-            party.addInvite(targetRef.getUuid());
-
-            targetRef.sendMessage(MessagesConfig.PARTY_INVITE_RECEIVED.param("username", playerRef.getUsername()));
-            player.sendMessage(MessagesConfig.PARTY_INVITE_SENT.param("username", targetRef.getUsername()));
+            final String message = messageBuilder.toString();
+            party.sendMessage(Message.raw("[Party]").color(Color.MAGENTA).insert(" " + playerRef.getUsername() + ": " + message).color(Color.WHITE));
         });
 
         return CompletableFuture.completedFuture(null);

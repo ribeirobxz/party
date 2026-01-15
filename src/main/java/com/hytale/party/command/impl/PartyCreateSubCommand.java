@@ -2,7 +2,6 @@ package com.hytale.party.command.impl;
 
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractAsyncCommand;
 import com.hypixel.hytale.server.core.entity.entities.Player;
@@ -14,7 +13,6 @@ import com.hytale.party.messages.MessagesConfig;
 import com.hytale.party.model.Party;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
-import java.awt.*;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.UUID;

@@ -21,10 +21,16 @@ public class PartyCommand extends CommandBase {
         addSubCommand(new PartyInviteSubCommand(partyCache));
         addSubCommand(new PartyDisbandSubCommand(partyCache));
         addSubCommand(new PartyLeaveSubCommand(partyCache));
+        addSubCommand(new PartyChatSubCommand(partyCache));
     }
 
     @Override
     protected void executeSync(@NonNullDecl CommandContext commandContext) {
-        commandContext.sendMessage(Message.join(Message.raw(""), Message.raw(" /party criar - crie uma party para você")));
+        commandContext.sendMessage(Message.join(Message.raw(""), Message.raw(" /party create - Create the party"),
+                Message.raw(" /party disband - Disband the party"),
+                Message.raw(" /party leave - Leave the party"),
+                Message.raw(" /party join <owner-name> - Join the party"),
+                Message.raw(" /party invite <player-name> - Invite the player to your party"),
+                Message.raw(" /party public - Turn your party public to others players")));
     }
 }

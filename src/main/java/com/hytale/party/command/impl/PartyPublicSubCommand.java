@@ -59,7 +59,7 @@ public class PartyPublicSubCommand extends AbstractAsyncCommand {
             party.setPublish(!party.isPublish());
 
             final String status = party.isPublish() ? "public" : "private";
-            party.sendNotification(Message.raw("Party"), MessagesConfig.PARTY_PUBLIC_STATUS.param("%status%", status), NotificationStyle.Success);
+            party.sendNotification(Message.raw("Party"), MessagesConfig.PARTY_PUBLIC_STATUS.param("status", status), NotificationStyle.Success);
         });
 
         return CompletableFuture.completedFuture(null);

@@ -2,8 +2,10 @@ package com.hytale.party.command.impl;
 
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.protocol.SoundCategory;
 import com.hypixel.hytale.protocol.packets.interface_.NotificationStyle;
 import com.hypixel.hytale.server.core.Message;
+import com.hypixel.hytale.server.core.asset.type.soundevent.config.SoundEvent;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractAsyncCommand;
 import com.hypixel.hytale.server.core.entity.entities.Player;
@@ -57,9 +59,11 @@ public class PartyLeaveSubCommand extends AbstractAsyncCommand {
             }
 
             party.removeMember(playerRef.getUuid());
-            party.sendNotification(Message.raw("Party"), MessagesConfig.PLAYER_LEAVE_PARTY.param("%username%", playerRef.getUsername()), NotificationStyle.Success);
 
-            EventTitleUtil.showEventTitleToPlayer(playerRef, Message.raw("GUILD"), MessagesConfig.PLAYER_LEAVE_PARTY_TITLE, true);
+            party.sendSound(SoundEvent.getAssetMap().getIndex("SFX_Cactus_Large_Hit"), SoundCategory.UI);
+            party.sendNotification(Message.raw("Party"), MessagesConfig.PLAYER_LEAVE_PARTY.param("username", playerRef.getUsername()), NotificationStyle.Success);
+
+            EventTitleUtil.showEventTitleToPlayer(playerRef, Message.raw("PARTY"), MessagesConfig.PLAYER_LEAVE_PARTY_TITLE, true);
         });
 
         return CompletableFuture.completedFuture(null);

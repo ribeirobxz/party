@@ -1,0 +1,21 @@
+
+errors.party.only-player = Only players can execute this command.
+errors.party.already-in-a-party = You are already in a party.
+errors.party.not-in-a-party = You are not in a party.
+errors.party.only-owner-can-invite = Only the party owner can invite players.
+errors.party.only-owner-can-disband = Only the party owner can disband the party.
+errors.party.leader-cant-leave-party = The party leader cannot leave. Disband or promote a new leader first.
+errors.party.player-not-found = Player not found.
+errors.party.player-dont-have-party = That player is not in a party.
+errors.party.player-dont-have-invite = You do not have an invite from this party.
+
+party.party-created = Party created successfully!
+party.party-disband = The party has been disbanded.
+party.party-invite-sent = Invite sent to {username}.
+party.party-invite-received = You received a party invite from {username}.
+party.party-public-status = Party is now {status}.
+party.player-join-party = {username} joined the party.
+party.player-leave-party = {username} left the party.
+
+party.title.player-join-party = you joined at {party-owner} party!
+party.title.player-leave-party = you leaved the party!

@@ -3,6 +3,7 @@ package com.hytale.party.cache;
 import com.hytale.party.model.Party;
 import lombok.NonNull;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -29,6 +30,10 @@ public class PartyCache {
 
     public boolean hasParty(@NonNull UUID playerId) {
         return cache.values().stream().anyMatch(party -> party.isMember(playerId));
+    }
+
+    public Collection<Party> getParties() {
+        return cache.values();
     }
 
 }

@@ -15,10 +15,6 @@ import com.hytale.party.messages.MessagesConfig;
 import com.hytale.party.model.Party;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
-import java.awt.*;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class PartyDisbandSubCommand extends AbstractAsyncCommand {
@@ -48,13 +44,13 @@ public class PartyDisbandSubCommand extends AbstractAsyncCommand {
             final PlayerRef playerRef = store.getComponent(reference, PlayerRef.getComponentType());
             if (playerRef == null) return;
 
-            if (!partyCache.hasParty(playerRef.getUuid())) {
+            final Party party = partyCache.getParty(playerRef.getUuid());
+            if (party == null) {
                 player.sendMessage(MessagesConfig.NOT_IN_A_PARTY);
                 return;
             }
 
-            final Party party = partyCache.getByOwner(playerRef.getUuid());
-            if(party == null) {
+            if (!party.isLeader(playerRef.getUuid())) {
                 player.sendMessage(MessagesConfig.ONLY_OWNER_CAN_DISBAND);
                 return;
             }
